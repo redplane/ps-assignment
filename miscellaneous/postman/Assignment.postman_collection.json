@@ -1,0 +1,108 @@
+{
+	"info": {
+		"_postman_id": "2fc2c8cb-5600-4f12-baf7-ab81a3ee45e5",
+		"name": "Assignment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2613483"
+	},
+	"item": [
+		{
+			"name": "Players",
+			"item": [
+				{
+					"name": "Create a player",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Player is created successfully', () => {\r",
+									"    const body = pm.response.json();\r",
+									"    pm.expect(body).to.have.property('id');\r",
+									"    pm.environment.set('player-id', body['id']);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-url}}/api/player",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"api",
+								"player"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit player progress",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"playerId\": \"{{player-id}}\",\r\n    \"playerLevel\": 3,\r\n    \"chipAmmountBet\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api-url}}/api/progress",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"api",
+								"progress"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "States",
+			"item": [
+				{
+					"name": "Get player state",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api-url}}/api/state/{{player-id}}",
+							"host": [
+								"{{api-url}}"
+							],
+							"path": [
+								"api",
+								"state",
+								"{{player-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

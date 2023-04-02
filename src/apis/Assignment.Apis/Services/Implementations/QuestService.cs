@@ -69,7 +69,11 @@ public class QuestService : IQuestService
             index = 0;
         return Task.FromResult(index);
     }
-    
+
+    public virtual Task<int> GetMaxPointAsync(CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult(_actualQuest.TotalPoint);
+    }
 
     #endregion
 }

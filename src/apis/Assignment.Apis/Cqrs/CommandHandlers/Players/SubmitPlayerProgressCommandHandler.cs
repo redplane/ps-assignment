@@ -34,8 +34,8 @@ public class SubmitPlayerProgressCommandHandler : IRequestHandler<SubmitPlayerPr
         // Player already completed the quest.
         var lastMilestoneId = await _questService.GetLastMilestoneIdAsync(cancellationToken);
         var lastMilestone = await _questService.GetMilestoneByIdAsync(lastMilestoneId, cancellationToken);
-
-        if (player.TotalPoints >= lastMilestone.TotalPoint ||  player.CurrentMilestone >= lastMilestoneId)
+        var maxPoint = await _questService.GetMaxPointAsync(cancellationToken);
+        if (player.TotalPoints >= maxPoint)
             throw new BusinessException(HttpStatusCode.Forbidden, ExceptionCodes.AlreadyCompletedQuest);
 
         // How many points can player receive ?
@@ -50,15 +50,15 @@ public class SubmitPlayerProgressCommandHandler : IRequestHandler<SubmitPlayerPr
         int nextMilestoneId;
         var completedMilestones = new LinkedList<MilestoneViewModel>();
         
-        if (totalPlayerPoint > lastMilestone.TotalPoint)
+        if (totalPlayerPoint >= maxPoint)
         {
-            totalPlayerPoint = lastMilestone.TotalPoint;
+            totalPlayerPoint = maxPoint;
             nextMilestoneId = lastMilestoneId;
             completedPercentage = 100;
         }
         else
         {
-            completedPercentage = (int) Math.Round((decimal) totalPlayerPoint * 100 / lastMilestone.TotalPoint,
+            completedPercentage = (int) Math.Round((decimal) totalPlayerPoint * 100 / maxPoint,
                 MidpointRounding.AwayFromZero);
             try
             {

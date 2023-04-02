@@ -14,5 +14,7 @@ public interface IQuestService
 
     Task<int> GetLastMilestoneIdAsync(CancellationToken cancellationToken = default);
 
+    Task<int> GetMaxPointAsync(CancellationToken cancellationToken = default);
+
     #endregion
 }
