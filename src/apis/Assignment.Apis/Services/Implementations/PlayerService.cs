@@ -5,6 +5,8 @@ using Assignment.Apis.Models.Exceptions;
 using Assignment.Businesses.Cqrs.Commands.Players;
 using Assignment.Businesses.Models;
 using Assignment.Businesses.Services.Abstractions;
+using Assignment.Businesses.ViewModels;
+using Assignment.Businesses.ViewModels.Players;
 using Assignment.Cores.Models;
 using Assignment.Cores.Models.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -64,16 +66,16 @@ namespace Assignment.Apis.Services.Implementations
             return player;
         }
 
-        public async Task<GetStateResponse> GetStateAsync(Guid playerId, CancellationToken cancellation = default)
+        public async Task<PlayerStateViewModel> GetStateAsync(Guid playerId, CancellationToken cancellation = default)
         {
-            var getStateResult = new GetStateResponse();
+            var getStateResult = new PlayerStateViewModel();
 
             // Get player info.
             var player = await _dbContext.FindAsync<Player>(playerId);
             if (player == null)
-                throw new NullReferenceException("Player not found.");
+                throw new BusinessException(HttpStatusCode.NotFound, ExceptionCodes.UserNotFound);
 
-            getStateResult.TotalQuestPercentCompleted = (int)Math.Round((decimal)(player.TotalPoints * 100 / _quest.TotalPoint), MidpointRounding.AwayFromZero);
+            getStateResult.TotalQuestPercentCompleted = (int)Math.Round(((decimal) player.TotalPoints * 100 / _quest.TotalPoint), MidpointRounding.AwayFromZero);
             getStateResult.LastMilestoneIndexCompleted = player.CurrentMilestone;
 
             return getStateResult;

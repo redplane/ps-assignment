@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Assignment.Apis.Controllers
 {
     [Route("api/[controller]")]
-    public class QuestController : ControllerBase
+    public class ProgressController : ControllerBase
     {
         #region Properties
 
@@ -17,7 +17,7 @@ namespace Assignment.Apis.Controllers
 
         #region Constructor
 
-        public QuestController(IMediator mediator)
+        public ProgressController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -31,23 +31,11 @@ namespace Assignment.Apis.Controllers
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        [HttpPost("progress")]
+        [HttpPost]
         public async Task<PlayerProgressViewModel> Progress([FromBody] SubmitPlayerProgressCommand command)
         {
             return await _mediator.Send(command);
         }
-
-        ///// <summary>
-        ///// Get the current state of player.
-        ///// </summary>
-        ///// <param name="playerId"></param>
-        ///// <returns></returns>
-        //[HttpPost("state/{playerId}")]
-        //public async Task<IActionResult> State([FromRoute] Guid playerId)
-        //{
-        //    var result = await _playerService.GetStateAsync(playerId);
-        //    return Ok(result);
-        //}
 
         #endregion
     }
