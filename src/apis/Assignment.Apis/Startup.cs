@@ -2,6 +2,7 @@ using Assignment.Apis.Constants;
 using Assignment.Apis.Extensions;
 using Assignment.Apis.Models;
 using Assignment.Apis.Services.Implementations;
+using Assignment.Businesses.Models;
 using Assignment.Businesses.Services.Abstractions;
 using Assignment.Cores.Models;
 using Microsoft.AspNetCore.Authorization;

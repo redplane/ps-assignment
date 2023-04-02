@@ -32,9 +32,10 @@ public class SubmitPlayerProgressCommandHandler : IRequestHandler<SubmitPlayerPr
             throw new BusinessException(HttpStatusCode.NotFound, ExceptionCodes.UserNotFound);
 
         // Player already completed the quest.
-        var maxQuestPoint = await _questService.GetMaxPointAsync(cancellationToken);
-        var maxMilestone = await _questService.GetMaxMilestoneAsync(cancellationToken);
-        if (player.TotalPoints > maxQuestPoint || player.CurrentMilestone >= maxMilestone)
+        var lastMilestoneId = await _questService.GetLastMilestoneIdAsync(cancellationToken);
+        var lastMilestone = await _questService.GetMilestoneByIdAsync(lastMilestoneId, cancellationToken);
+
+        if (player.TotalPoints >= lastMilestone.TotalPoint ||  player.CurrentMilestone >= lastMilestoneId)
             throw new BusinessException(HttpStatusCode.Forbidden, ExceptionCodes.AlreadyCompletedQuest);
 
         // How many points can player receive ?
@@ -45,39 +46,48 @@ public class SubmitPlayerProgressCommandHandler : IRequestHandler<SubmitPlayerPr
         // If player point exceeds max point of a quest, set the point to the max.
         var totalPlayerPoint = player.TotalPoints + totalRewardedPoint;
         var totalPlayerChip = player.TotalChips;
-        var completedPercentage = 0;
-        var nextMilestone = player.CurrentMilestone;
+        int completedPercentage;
+        int nextMilestoneId;
         var completedMilestones = new LinkedList<MilestoneViewModel>();
-
-        if (totalPlayerPoint > maxQuestPoint)
+        
+        if (totalPlayerPoint > lastMilestone.TotalPoint)
         {
-            totalPlayerPoint = maxQuestPoint;
-            nextMilestone = await _questService.GetMaxMilestoneAsync(cancellationToken);
+            totalPlayerPoint = lastMilestone.TotalPoint;
+            nextMilestoneId = lastMilestoneId;
             completedPercentage = 100;
         }
         else
         {
-            completedPercentage = (int) Math.Round((decimal) totalRewardedPoint * 100 / maxQuestPoint,
+            completedPercentage = (int) Math.Round((decimal) totalPlayerPoint * 100 / lastMilestone.TotalPoint,
                 MidpointRounding.AwayFromZero);
-            var nearestMilestone = await _questService.FindNearestMilestoneAsync(totalPlayerPoint, cancellationToken);
-            if (nextMilestone < player.CurrentMilestone)
-                throw new BusinessException(HttpStatusCode.InternalServerError, ExceptionCodes.InvalidNewMilestone);
-            nextMilestone = nearestMilestone.Milestone;
-        }
-
-        // Sum all the chips from milestones that player archived.
-        for (var milestone = player.CurrentMilestone + 1; milestone <= nextMilestone; milestone++)
-        {
-            var awardedChip = await _questService.GetMilestoneChipAsync(milestone, cancellationToken);
-            totalPlayerChip += awardedChip;
-            completedMilestones.AddLast(new MilestoneViewModel
+            try
             {
-                MilestoneIndex = milestone,
-                ChipsAwarded = awardedChip
-            });
+                var targetMilestone = await _questService.GetByPointAsync(totalPlayerPoint, cancellationToken);
+                nextMilestoneId = targetMilestone.Index;
+            }
+            catch
+            {
+                nextMilestoneId = -1;
+            }
         }
 
-        await _playerService.UpdateAsync(player.Id, totalPlayerPoint, nextMilestone, totalPlayerChip,
+        // Enough point to go to the next milestone.
+        if (player.CurrentMilestone < nextMilestoneId)
+        {
+            // Sum all the chips from milestones that player archived.
+            for (var milestoneId = player.CurrentMilestone + 1; milestoneId <= nextMilestoneId; milestoneId++)
+            {
+                var milestone = await _questService.GetMilestoneByIdAsync(milestoneId, cancellationToken);
+                totalPlayerChip += milestone.Chips;
+                completedMilestones.AddLast(new MilestoneViewModel
+                {
+                    MilestoneIndex = milestoneId,
+                    ChipsAwarded = milestone.Chips
+                });
+            }
+        }
+        
+        await _playerService.UpdateAsync(player.Id, totalPlayerPoint, nextMilestoneId, totalPlayerChip,
             cancellationToken);
         return new PlayerProgressViewModel
         {

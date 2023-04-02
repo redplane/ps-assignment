@@ -37,7 +37,7 @@ namespace Assignment.Apis.Services.Implementations
         {
             var player = new Player(Guid.NewGuid());
             player.TotalPoints = 0;
-            player.CurrentMilestone = 0;
+            player.CurrentMilestone = -1;
             player.TotalChips = 0;
 
             var insertResult = await _dbContext.Players!.AddAsync(player, cancellationToken);

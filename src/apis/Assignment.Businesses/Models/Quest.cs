@@ -1,4 +1,4 @@
-﻿namespace Assignment.Apis.Models
+﻿namespace Assignment.Businesses.Models
 {
     public class Quest
     {
