@@ -1,0 +1,24 @@
+﻿version: "3"
+
+services:
+  
+  #region Databases
+  
+  # Mongo database
+  postgresql:
+    image: postgres:15.2
+    restart: on-failure
+    environment:
+      POSTGRES_PASSWORD: abcde12345-
+      POSTGRES_USER: linh.nguyen
+      POSTGRES_DB: assignment
+
+    ports:
+      - "5432:5432"
+    networks:
+      - assignment-service
+  
+  #endregion
+  
+networks:
+  assignment-service: {}
