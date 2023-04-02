@@ -120,3 +120,15 @@ curl --location 'http://localhost:5000/api/progress' \
 ```
 curl --location 'http://localhost:5000/api/state/1e53832f-f875-48ec-9483-86507c4ce74a'
 ```
+
+## 3. Database diagram.
+The database diagram can be found in [miscellaneous folder](miscellaneous) with the following design:
+![Database](miscellaneous/database-diagram.png)
+
+Which has:
+
+- **Players table**: To save information of a player.
+  - What milestone player is at.
+  - How many points have been added to that player
+
+- **_EFMigrationsHistory**: An auto-generated table of EF Core to manage migration histories.
