@@ -33,7 +33,6 @@ public class SubmitPlayerProgressCommandHandler : IRequestHandler<SubmitPlayerPr
 
         // Player already completed the quest.
         var lastMilestoneId = await _questService.GetLastMilestoneIdAsync(cancellationToken);
-        var lastMilestone = await _questService.GetMilestoneByIdAsync(lastMilestoneId, cancellationToken);
         var maxPoint = await _questService.GetMaxPointAsync(cancellationToken);
         if (player.TotalPoints >= maxPoint)
             throw new BusinessException(HttpStatusCode.Forbidden, ExceptionCodes.AlreadyCompletedQuest);
