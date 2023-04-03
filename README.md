@@ -143,6 +143,10 @@ To run unit test, run the following command:
 dotnet test
 ```
 
-Result will be as the below image:
+## 4. Sequence diagram
 
-![Unit test result](miscellaneous/UnitTest.png)
+Sequence diagram can be found in [miscellaneous](miscellaneous/sequence-diagrams)
+- There are **.txt** files that can be opened in [sequencediagram.org](sequencediagram.org) for future updates (if necessary).
+- There are exported images for quick previews, such as:
+
+![Preview diagram](miscellaneous/sequence-diagrams/submit-player-progress.png)

@@ -11,10 +11,9 @@ using Assignment.Cores.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using NuGet.Frameworks;
 using NUnit.Framework;
 
-namespace quest_api_tests.Tests.CommandHandlers
+namespace Assignment.Api.UnitTests.Tests.CommandHandlers
 {
     [TestFixture]
     public class SubmitPlayerProgressCommandHandlerTests

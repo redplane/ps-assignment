@@ -1,0 +1,15 @@
+title Submit player progress
+
+(Web client)->(ProgressController):[POST] api/progress
+(ProgressController)->(SubmitPlayerProgressCommandHandler): Send **SubmitPlayerCommand**
+(SubmitPlayerProgressCommandHandler)->(PlayerService): Call GetUserByIdAsync(..)
+(SubmitPlayerProgressCommandHandler)<-(PlayerService): Return player
+alt Player is not found
+(Web client)<-(SubmitPlayerProgressCommandHandler): Throw **UserNotFoundException**
+else 
+(SubmitPlayerProgressCommandHandler)->(SubmitPlayerProgressCommandHandler): Calculate **totalReceivedPoint**, **totalPlayerPoint**, **completedMilestones**, **totalPlayerChip**
+(SubmitPlayerProgressCommandHandler)->(PlayerService): Update player with the calculation
+(SubmitPlayerProgressCommandHandler)<-(PlayerService): Return player
+(ProgressController)<-(SubmitPlayerProgressCommandHandler): Return calculation result
+(Web client)<-(SubmitPlayerProgressCommandHandler): Return calculation result
+end
