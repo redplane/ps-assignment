@@ -132,3 +132,17 @@ Which has:
   - How many points have been added to that player
 
 - **_EFMigrationsHistory**: An auto-generated table of EF Core to manage migration histories.
+
+
+## 3. Tests
+
+This project includes unit tests to ensure the new functions will not break the old ones.
+To run unit test, run the following command:
+
+```
+dotnet test
+```
+
+Result will be as the below image:
+
+![Unit test result](miscellaneous/UnitTest.png)
